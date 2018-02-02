@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -102,11 +103,11 @@ seriesType('map', 'scatter', {
 	/**
 	 * The border width of each map area.
 	 * 
-	 * In styled mode, the border stroke width is given in the `.highcharts-point` class.
+	 * In styled mode, the border stroke width is given in the
+	 * `.highcharts-point` class.
 	 * 
-	 * @type {Number}
-	 * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
-	 * @default 1
+	 * @sample    {highmaps} maps/plotoptions/series-border/ Borders demo
+	 * @product   highmaps
 	 * @apioption plotOptions.series.borderWidth
 	 */
 	borderWidth: 1,
@@ -203,6 +204,15 @@ seriesType('map', 'scatter', {
 			halo: null,
 
 			/**
+			 * The color of the shape in this state
+			 * 
+			 * @type {Color}
+			 * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
+			 * @product highmaps
+			 * @apioption plotOptions.series.states.hover.color
+			 */
+
+			/**
 			 * The border color of the point in this state.
 			 * 
 			 * @type {Color}
@@ -228,15 +238,6 @@ seriesType('map', 'scatter', {
 			 * @apioption plotOptions.series.states.hover.brightness
 			 */
 			brightness: 0.2
-
-			/**
-			 * The color of the shape in this state
-			 * 
-			 * @type {Color}
-			 * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
-			 * @product highmaps
-			 * @apioption plotOptions.series.states.hover.color
-			 */
 
 		},
 

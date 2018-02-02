@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -57,11 +57,15 @@ var hasTouch = H.hasTouch,
 		maxLength: '100%',
 
 		/**
-		 * Options for axis resizing for Drag Panes module.
+		 * Options for axis resizing. This feature requires the
+		 * `drag-panes.js` -
+		 * [classic](http://code.highcharts.com/stock/modules/drag-panes.js) or
+		 * [styled](http://code.highcharts.com/stock/js/modules/drag-panes.js)
+		 * mode - module.
 		 *
-		 * This feature requires the `drag-panes.js` module.
-		 *
-		 * @product      highstock
+		 * @product highstock
+		 * @sample	{highstock} stock/demo/candlestick-and-volume
+		 *          Axis resizing enabled
 		 * @optionparent yAxis.resize
 		 */
 		resize: {
@@ -417,7 +421,11 @@ H.AxisResizer.prototype = {
 					minLength, maxLength;
 
 				// Skip if axis is not found
-				if (!axisOptions) {
+				// or it is navigator's yAxis (#7732)
+				if (
+					!axisOptions ||
+					axisOptions.id === 'navigator-y-axis'
+				) {
 					return;
 				}
 

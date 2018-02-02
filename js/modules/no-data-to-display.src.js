@@ -36,8 +36,8 @@ extend(defaultOptions.lang, {
 // Add default display options for message
 /**
  * Options for displaying a message like "No data to display". 
- * This feature requires the file no-data-to-display.js to be loaded in the page. 
- * The actual text to display is set in the lang.noData option.
+ * This feature requires the file no-data-to-display.js to be loaded in the
+ * page. The actual text to display is set in the lang.noData option.
  * @type {Object}
  * @optionparent noData
  */
@@ -50,6 +50,17 @@ defaultOptions.noData = {
 	 * @since 3.0.8
 	 * @product highcharts highstock
 	 * @apioption noData.attr
+	 */
+	
+	/**
+	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
+	 * SVG.
+	 * 
+	 * @type {Boolean}
+	 * @default false
+	 * @since 4.1.10
+	 * @product highcharts highstock
+	 * @apioption noData.useHTML
 	 */
 
 	/**
@@ -98,17 +109,6 @@ defaultOptions.noData = {
 		 */
 		verticalAlign: 'middle'
 	}
-	
-	/**
-	 * Whether to insert the label as HTML, or as pseudo-HTML rendered with
-	 * SVG.
-	 * 
-	 * @type {Boolean}
-	 * @default false
-	 * @since 4.1.10
-	 * @product highcharts highstock
-	 * @apioption noData.useHTML
-	 */
 };
 
 /*= if (build.classic) { =*/
@@ -138,7 +138,7 @@ each([
 ], function (type) {
 	if (seriesTypes[type]) {
 		seriesTypes[type].prototype.hasData = function () {
-			return !!this.points.length; /* != 0 */
+			return !!this.points.length; // != 0
 		};
 	}
 });
@@ -148,7 +148,11 @@ each([
  * points on this series within the plot area.
  */
 H.Series.prototype.hasData = function () {
-	return this.visible && this.dataMax !== undefined && this.dataMin !== undefined; // #3703
+	return (
+		this.visible &&
+		this.dataMax !== undefined &&
+		this.dataMin !== undefined // #3703
+	);
 };
 
 /**
@@ -184,7 +188,11 @@ chartPrototype.showNoData = function (str) {
 
 		chart.noDataLabel.add();
 
-		chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
+		chart.noDataLabel.align(
+			extend(chart.noDataLabel.getBBox(), noDataOptions.position),
+			false,
+			'plotBox'
+		);
 	}
 };
 

@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: ["warn", 80, 4] */
+    
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -99,8 +99,6 @@ if (H.seriesTypes.pie) {
 
 /**
  * Accessibility options
- * @type {Object}
- * @optionparent
  */
 H.setOptions({
 
@@ -112,28 +110,10 @@ H.setOptions({
 	 * com/docs/chart-concepts/accessibility).
 	 * 
 	 * @since 5.0.0
+	 * @type {Object}
+	 * @optionparent accessibility
 	 */
 	accessibility: {
-
-		/**
-		 * Enable accessibility features for the chart.
-		 * 
-		 * @type {Boolean}
-		 * @default true
-		 * @since 5.0.0
-		 */
-		enabled: true,
-
-		/**
-		 * When a series contains more points than this, we no longer expose
-		 * information about individual points to screen readers.
-		 * 
-		 * Set to `false` to disable.
-		 * 
-		 * @type {Number|Boolean}
-		 * @since 5.0.0
-		 */
-		pointDescriptionThreshold: false // set to false to disable
 
 		/**
 		 * Whether or not to add series descriptions to charts with a single
@@ -224,6 +204,26 @@ H.setOptions({
 		 * @since 5.0.0
 		 * @apioption accessibility.seriesDescriptionFormatter
 		 */
+
+		/**
+		 * Enable accessibility features for the chart.
+		 * 
+		 * @type {Boolean}
+		 * @default true
+		 * @since 5.0.0
+		 */
+		enabled: true,
+
+		/**
+		 * When a series contains more points than this, we no longer expose
+		 * information about individual points to screen readers.
+		 * 
+		 * Set to `false` to disable.
+		 * 
+		 * @type {Number|Boolean}
+		 * @since 5.0.0
+		 */
+		pointDescriptionThreshold: false // set to false to disable
 	}
 });
 

@@ -5,7 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
-
+/* eslint max-len: 0 */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -163,10 +163,6 @@ colorAxisMethods = {
  */
 var solidGaugeOptions = {
 	/**
-	 * Whether to give each point an individual color.
-	 */
-	colorByPoint: true
-	/**
 	 * Whether the strokes of the solid gauge should be `round` or `square`.
 	 * 
 	 * @validvalue ["square", "round"]
@@ -200,6 +196,11 @@ var solidGaugeOptions = {
 	 * @product highcharts
 	 * @apioption plotOptions.solidgauge.threshold
 	 */
+	
+	/**
+	 * Whether to give each point an individual color.
+	 */
+	colorByPoint: true
 
 };
 
@@ -389,11 +390,16 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * 
  * @type {Array<Object|Number>}
  * @extends series.gauge.data
- * @sample {highcharts} highcharts/chart/reflow-true/ Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/ Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects    
  * @product highcharts
  * @apioption series.solidgauge.data
  */

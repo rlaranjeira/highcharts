@@ -16,6 +16,9 @@ const {
     removeDirectory,
     writeFile
 } = require('highcharts-assembler/src/utilities.js');
+const {
+  checkDependency
+} = require('./tools/filesystem.js');
 
 
 /**
@@ -128,6 +131,8 @@ const getFileOptions = (base) => {
  * @return undefined
  */
 const scripts = () => {
+    // Check if the installed version of the assembler matches the dependency.
+    checkDependency('highcharts-assembler', 'err', 'devDependencies');
     const build = require('highcharts-assembler');
     // const argv = require('yargs').argv; Already declared in the upper scope
     const files = (argv.file) ? argv.file.split(',') : null;
@@ -385,6 +390,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
+        './js/modules/data.src.js',
         './js/modules/offline-exporting.src.js'
     ];
     const optionsJSDoc = {
@@ -997,10 +1003,7 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
             console.log(message.noSeries);
             reject(new Error(message.noSeries));
         }
-        generate(json, output, onlyBuildCurrent, {
-            platform: 'JS',
-            products: { highcharts: true, highstock: true, highmaps: true }
-        }, () => {
+        generate(json, output, onlyBuildCurrent, () => {
             console.log(message.success);
             resolve(message.success);
         });
@@ -1336,7 +1339,7 @@ const startServer = () => {
 
     console.log(
         'Starting API docs server',
-        ('http://localhost:' + docport).blue.underline.bgWhite
+        ('http://localhost:' + docport).cyan
     );
 };
 
@@ -1368,13 +1371,13 @@ const jsdoc = () => {
         gulp.watch(watchFiles, ['jsdoc']);
         console.log('Watching file changes in JS files and templates');
 
-        if (!apiServerRunning) {
-            startServer();
-            apiServerRunning = true;
-        }
-
     } else {
         console.log('Tip: use the --watch argument to watch JS file changes');
+    }
+
+    if (!apiServerRunning) {
+        startServer();
+        apiServerRunning = true;
     }
 
     return generateClassReferences(optionsClassReference)
@@ -1383,7 +1386,6 @@ const jsdoc = () => {
 
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
-gulp.task('generate-api', generateAPIDocs);
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-api', cleanApi);
 gulp.task('clean-dist', cleanDist);
@@ -1420,6 +1422,7 @@ gulp.task('dist', () => {
 });
 
 gulp.task('scripts-new', () => {
+    checkDependency('highcharts-assembler', 'err', 'devDependencies');
     const {
         join,
         relative,
