@@ -136,6 +136,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 					rotation,
 					align,
 					elem.innerHTML,
+					wrapper.textWidth,
 					wrapper.textAlign
 				].join(',');
 
@@ -296,6 +297,16 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 			wrapper.doTransform = true;
 		};
 
+		// Runs at the end of .attr()
+		wrapper.afterSetters = function () {
+			// Update transform. Do this outside the loop to prevent redundant
+			// updating for batch setting of attributes.
+			if (this.doTransform) {
+				this.htmlUpdateTransform();
+				this.doTransform = false;
+			}
+		};
+
 		// Set the default attributes
 		wrapper
 			.attr({
@@ -316,16 +327,6 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;
-
-		// Runs at the end of .attr()
-		wrapper.afterSetters = function () {
-			// Update transform. Do this outside the loop to prevent redundant
-			// updating for batch setting of attributes.
-			if (this.doTransform) {
-				this.htmlUpdateTransform();
-				this.doTransform = false;
-			}
-		};
 
 		// This is specific for HTML within SVG
 		if (isSVG) {

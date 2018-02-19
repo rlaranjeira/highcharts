@@ -59,24 +59,12 @@ seriesType('bubble', 'scatter', {
 	 *            Negative bubbles
 	 * @default   true
 	 * @since     3.0
-	 * @product   highcharts
 	 * @apioption plotOptions.bubble.displayNegative
 	 */
 
 	/**
-	 * Options for the point markers of line-like series. Properties like
-	 * `fillColor`, `lineColor` and `lineWidth` define the visual appearance
-	 * of the markers. Other series types, like column series, don't have
-	 * markers, but have visual options on the series level instead.
-	 * 
-	 * In styled mode, the markers can be styled with the `.highcharts-point`,
-	 * `.highcharts-point-hover` and `.highcharts-point-select`
-	 * class names.
-	 * 
-	 * @type      {Object}
 	 * @extends   plotOptions.series.marker
-	 * @excluding enabled,height,radius,width
-	 * @product   highcharts
+	 * @excluding enabled,enabledThreshold,height,radius,width
 	 */
 	marker: {
 		/*= if (build.classic) { =*/
@@ -92,7 +80,9 @@ seriesType('bubble', 'scatter', {
 		 * In bubble charts, the radius is overridden and determined based on 
 		 * the point's data value.
 		 */
-		/** @ignore */
+		/** 
+		 * @ignore
+		 */
 		radius: null,
 
 		states: {
@@ -133,7 +123,7 @@ seriesType('bubble', 'scatter', {
 	 * @type    {Number|String}
 	 * @sample  {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
 	 * @since   3.0
-	 * @product highcharts
+	 * @product highcharts highstock
 	 */
 	minSize: 8,
 
@@ -143,10 +133,11 @@ seriesType('bubble', 'scatter', {
 	 * Can be either pixels (when no unit is given), or a percentage of
 	 * the smallest one of the plot width and height.
 	 * 
+	 * @type    {Number|String}
 	 * @sample  {highcharts} highcharts/plotoptions/bubble-size/
 	 *          Bubble size
 	 * @since   3.0
-	 * @product highcharts
+	 * @product highcharts highstock
 	 */
 	maxSize: '20%',
 	
@@ -174,7 +165,6 @@ seriesType('bubble', 'scatter', {
 	 *             Comparison of area and size
 	 * @default    area
 	 * @since      3.0.7
-	 * @product    highcharts
 	 * @apioption  plotOptions.bubble.sizeBy
 	 */
 	
@@ -224,23 +214,6 @@ seriesType('bubble', 'scatter', {
 	turboThreshold: 0,
 
 	/**
-	 * When [displayNegative](#plotOptions.bubble.displayNegative) is `false`,
-	 * bubbles with lower Z values are skipped. When `displayNegative`
-	 * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
-	 * is given, points with lower Z is colored.
-	 * 
-	 * @type    {Number}
-	 * @sample  {highcharts} highcharts/plotoptions/bubble-negative/
-	 *          Negative bubbles
-	 * @default 0
-	 * @since   3.0
-	 * @product highcharts
-	 */
-	zThreshold: 0,
-
-	zoneAxis: 'z'
-
-	/**
 	 * The minimum for the Z value range. Defaults to the highest Z value
 	 * in the data.
 	 * 
@@ -267,6 +240,23 @@ seriesType('bubble', 'scatter', {
 	 * @product   highcharts
 	 * @apioption plotOptions.bubble.zMin
 	 */
+
+	/**
+	 * When [displayNegative](#plotOptions.bubble.displayNegative) is `false`,
+	 * bubbles with lower Z values are skipped. When `displayNegative`
+	 * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
+	 * is given, points with lower Z is colored.
+	 * 
+	 * @type    {Number}
+	 * @sample  {highcharts} highcharts/plotoptions/bubble-negative/
+	 *          Negative bubbles
+	 * @default 0
+	 * @since   3.0
+	 * @product highcharts
+	 */
+	zThreshold: 0,
+
+	zoneAxis: 'z'
 
 // Prototype members
 }, {
@@ -574,7 +564,7 @@ Axis.prototype.beforePadding = function () {
  * @type      {Object}
  * @extends   series,plotOptions.bubble
  * @excluding dataParser,dataURL,stack
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption series.bubble
  */
 
@@ -644,4 +634,9 @@ Axis.prototype.beforePadding = function () {
  * @type {Number}
  * @product highcharts
  * @apioption series.bubble.data.z
+ */
+
+/**
+ * @excluding enabled,enabledThreshold,height,radius,width
+ * @apioption series.bubble.marker
  */

@@ -74,6 +74,7 @@ each(['column', 'pie'], function (type) {
 	}
 });
 
+
 /**
  * Strip HTML tags away from a string. Used for aria-label attributes, painting
  * on a canvas will fail if the text contains tags.
@@ -85,6 +86,9 @@ function stripTags(s) {
 }
 
 
+/**
+ * Set default keyboard navigation options
+ */
 H.setOptions({
 	accessibility: {
 
@@ -988,7 +992,10 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					button.element.setAttribute('role', 'button');
 					button.element.setAttribute(
 						'aria-label',
-						'Zoom ' + (i ? 'out ' : '') + 'chart'
+						chart.langFormat(
+							'accessibility.mapZoom' + (i ? 'Out' : 'In'),
+							{ chart: chart }
+						)
 					);
 				});
 
@@ -1040,7 +1047,13 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					button.element.setAttribute('role', 'button');
 					button.element.setAttribute(
 						'aria-label',
-						'Select range ' + (button.text && button.text.textStr)
+						chart.langFormat(
+							'accessibility.rangeSelectorButton',
+							{ 
+								chart: chart,
+								buttonText: button.text && button.text.textStr
+							}
+						)
 					);
 				});
 				// Focus first/last button
@@ -1132,7 +1145,13 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 					item.legendGroup.element.setAttribute('role', 'button');
 					item.legendGroup.element.setAttribute(
 						'aria-label',
-						stripTags('Toggle visibility of series ' + item.name)
+						chart.langFormat(
+							'accessibility.legendItem',
+							{ 
+								chart: chart,
+								itemName: stripTags(item.name)
+							}
+						)
 					);
 				});
 				// Focus first/last item

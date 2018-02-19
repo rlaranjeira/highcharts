@@ -1412,7 +1412,6 @@ function GLRenderer(postRenderCallback) {
 
 			cullXThreshold = 1,
 			cullYThreshold = 1,
-			mx,
 
 			// The following are used in the builder while loop
 			x,
@@ -1803,17 +1802,11 @@ function GLRenderer(postRenderCallback) {
 				// 		false
 				// 	)), 1e5)
 				// );
-				
-				if (settings.useGPUTranslations) {
-					mx = xAxis.toPixels(x, true);
-				} else {
-					mx = x;
-				}
 
 				if (lastX !== false) {
 					series.closestPointRangePx = Math.min(
 						series.closestPointRangePx,
-						Math.abs(mx - lastX)
+						Math.abs(x - lastX)
 					);
 				}
 			}
@@ -2071,6 +2064,7 @@ function GLRenderer(postRenderCallback) {
 		each(series, function (s, si) {
 			var options = s.series.options,
 				sindex,
+				lineWidth = typeof options.lineWidth !== 'undefined' ? options.lineWidth : 1,
 				threshold = options.threshold,
 				hasThreshold = isNumber(threshold),
 				yBottom = s.series.yAxis.getThreshold(threshold),
@@ -2165,13 +2159,15 @@ function GLRenderer(postRenderCallback) {
 			shader.setDrawAsCircle((asCircle[s.series.type] && textureIsReady) || false);
 
 			// Do the actual rendering
-			// vbuffer.render(s.from, s.to, s.drawMode);
-			for (sindex = 0; sindex < s.segments.length; sindex++) {
-				vbuffer.render(
-					s.segments[sindex].from,
-					s.segments[sindex].to,
-					s.drawMode
-				);
+			// If the line width is < 0, skip rendering of the lines. See #7833.
+			if (lineWidth > 0 || s.drawMode !== 'line_strip') {
+				for (sindex = 0; sindex < s.segments.length; sindex++) {
+					vbuffer.render(
+						s.segments[sindex].from,
+						s.segments[sindex].to,
+						s.drawMode
+					);
+				}
 			}
 
 			if (s.hasMarkers && showMarkers) {

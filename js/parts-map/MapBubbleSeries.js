@@ -30,11 +30,7 @@ if (seriesTypes.bubble) {
 	 */
 	seriesType('mapbubble', 'bubble', {
 
-		animationLimit: 500,
-
-		tooltip: {
-			pointFormat: '{point.name}: {point.z}'
-		}
+		
 
 		/**
 		 * The main color of the series. This color affects both the fill and
@@ -59,28 +55,14 @@ if (seriesTypes.bubble) {
 		 */
 
 		/**
-		 * Maximum bubble size. Bubbles will automatically size between the
-		 * `minSize` and `maxSize` to reflect the `z` value of each bubble.
-		 * Can be either pixels (when no unit is given), or a percentage of
-		 * the smallest one of the plot width and height.
-		 * 
-		 * @type {String}
-		 * @sample {highmaps} maps/demo/map-bubble/ Bubble size
-		 * @default 20%
-		 * @product highmaps
+		 * @sample    {highmaps} maps/demo/map-bubble/ Bubble size
+		 * @product   highmaps
 		 * @apioption plotOptions.mapbubble.maxSize
 		 */
 
 		/**
-		 * Minimum bubble size. Bubbles will automatically size between the
-		 * `minSize` and `maxSize` to reflect the `z` value of each bubble.
-		 * Can be either pixels (when no unit is given), or a percentage of
-		 * the smallest one of the plot width and height.
-		 * 
-		 * @type {String}
-		 * @sample {highmaps} maps/demo/map-bubble/ Bubble size
-		 * @default 8
-		 * @product highmaps
+		 * @sample    {highmaps} maps/demo/map-bubble/ Bubble size
+		 * @product   highmaps
 		 * @apioption plotOptions.mapbubble.minSize
 		 */
 
@@ -165,6 +147,12 @@ if (seriesTypes.bubble) {
 		 * @product highmaps
 		 * @apioption plotOptions.mapbubble.zThreshold
 		 */
+
+		animationLimit: 500,
+
+		tooltip: {
+			pointFormat: '{point.name}: {point.z}'
+		}
 
 	// Prototype members
 	}, {
@@ -262,4 +250,9 @@ if (seriesTypes.bubble) {
  * @sample {highmaps} maps/demo/map-bubble/ Bubble
  * @product highmaps
  * @apioption series.mapbubble.data.z
+ */
+
+/**
+ * @excluding enabled,enabledThreshold,height,radius,width
+ * @apioption series.mapbubble.marker
  */

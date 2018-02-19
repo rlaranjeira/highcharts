@@ -119,38 +119,48 @@ if (!H.ColorAxis) {
 			 */
 
 			/**
-			 * The start of the value range that the data class represents, relating
-			 * to the point value.
+			 * The start of the value range that the data class represents,
+			 * relating to the point value.
+			 *
+			 * The range of each `dataClass` is closed in both ends, but can be
+			 * overridden by the next `dataClass`.
 			 * 
-			 * @type {Number}
-			 * @product highcharts highmaps
+			 * @type      {Number}
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.from
 			 */
 
 			/**
-			 * The name of the data class as it appears in the legend. If no name
-			 * is given, it is automatically created based on the `from` and `to`
-			 * values. For full programmatic control, [legend.labelFormatter](#legend.
-			 * labelFormatter) can be used. In the formatter, `this.from` and
-			 * `this.to` can be accessed.
+			 * The name of the data class as it appears in the legend.
+			 * If no name is given, it is automatically created based on the
+			 * `from` and `to` values. For full programmatic control,
+			 * [legend.labelFormatter](#legend.labelFormatter) can be used.
+			 * In the formatter, `this.from` and `this.to` can be accessed.
 			 * 
-			 * @type {String}
-			 * @sample {highmaps} maps/coloraxis/dataclasses-name/ Named data classes
-			 * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
-			 * @product highcharts highmaps
+			 * @type      {String}
+			 * @sample    {highmaps} maps/coloraxis/dataclasses-name/
+			 *            Named data classes
+			 * @sample    {highmaps} maps/coloraxis/dataclasses-labelformatter/
+			 *            Formatted data classes
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.name
 			 */
 
 			/**
-			 * The end of the value range that the data class represents, relating
-			 * to the point value.
+			 * The end of the value range that the data class represents,
+			 * relating to the point value.
+			 *
+			 * The range of each `dataClass` is closed in both ends, but can be
+			 * overridden by the next `dataClass`.
 			 * 
-			 * @type {Number}
-			 * @product highcharts highmaps
+			 * @type      {Number}
+			 * @product   highcharts highmaps
 			 * @apioption colorAxis.dataClasses.to
 			 */
 
-			/** @ignore */
+			/** 
+	 		 * @ignore
+	 		 */
 			lineWidth: 0,
 
 			/**
@@ -281,7 +291,9 @@ if (!H.ColorAxis) {
 					duration: 50
 				},
 
-				/** @ignore */
+				/** 
+				 * @ignore
+				 */
 				width: 0.01,
 				/*= if (build.classic) { =*/
 
@@ -395,6 +407,15 @@ if (!H.ColorAxis) {
 			 * @type {Boolean}
 			 * @product highcharts highmaps
 			 * @apioption colorAxis.reversed
+			 */
+
+			/**
+			 * Fires when the legend item belonging to the colorAxis is clicked.
+			 * One parameter, `event`, is passed to the function.
+			 * 
+			 * @type      {Function}
+			 * @product   highcharts highmaps
+			 * @apioption colorAxis.events.legendItemClick
 			 */
 
 			/**

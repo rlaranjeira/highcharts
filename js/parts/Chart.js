@@ -567,6 +567,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
 			optionsArray;
 
+		fireEvent(this, 'beforeGetAxes');
+
 		// make sure the options are arrays and add some members
 		each(xAxisOptions, function (axis, i) {
 			axis.index = i;
@@ -746,7 +748,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				titleSize = titleOptions.style.fontSize;
 				/*= } =*/
 				titleSize = renderer.fontMetrics(titleSize, title).b;
-				
 				title
 					.css({
 						width: (titleOptions.width ||
@@ -1571,6 +1572,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// reset
 		chart.isDirtyBox = false;
+
+		fireEvent(this, 'afterDrawChartBox');
 	},
 
 	/**

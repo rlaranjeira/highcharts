@@ -49,6 +49,14 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 seriesType('map', 'scatter', {
 
 	/**
+	 * Define the z index of the series.
+	 * 
+	 * @type {Number}
+	 * @product highmaps
+	 * @apioption plotOptions.series.zIndex
+	 */
+
+	/**
 	 * Whether all areas of the map defined in `mapData` should be rendered.
 	 * If `true`, areas which don't correspond to a data point, are rendered
 	 * as `null` points. If `false`, those areas are skipped.
@@ -123,7 +131,9 @@ seriesType('map', 'scatter', {
 	 * @apioption plotOptions.series.colorAxis
 	 */
 	
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null,
 
 	stickyTracking: false,
@@ -164,7 +174,9 @@ seriesType('map', 'scatter', {
 		padding: 0
 	},
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	turboThreshold: 0,
 
 	tooltip: {
@@ -245,14 +257,6 @@ seriesType('map', 'scatter', {
 			color: '${palette.neutralColor20}'
 		}
 	}
-
-	/**
-	 * Define the z index of the series.
-	 * 
-	 * @type {Number}
-	 * @product highmaps
-	 * @apioption plotOptions.series.zIndex
-	 */
 
 // Prototype members
 }, merge(colorSeriesMixin, {
@@ -1016,7 +1020,7 @@ seriesType('map', 'scatter', {
  * 
  * @type {Object}
  * @extends series,plotOptions.map
- * @excluding dataParser,dataURL
+ * @excluding dataParser,dataURL,marker
  * @product highmaps
  * @apioption series.map
  */

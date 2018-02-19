@@ -32,7 +32,7 @@ var colorPointMixin = H.colorPointMixin,
  * @sample highcharts/demo/heatmap-canvas/
  *         Heavy heatmap
  * @extends {plotOptions.scatter}
- * @excluding marker,pointRange
+ * @excluding marker,pointRange,pointPlacement
  * @product highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
@@ -120,7 +120,9 @@ seriesType('heatmap', 'scatter', {
 		padding: 0 // #3837
 	},
 
-	/** @ignore */
+	/** 
+	 * @ignore
+	 */
 	marker: null,
 
 	/**	@ignore */
@@ -133,7 +135,9 @@ seriesType('heatmap', 'scatter', {
 	states: {
 
 		hover: {
-			/** @ignore */
+			/** 
+			 * @ignore
+			 */
 			halo: false,  // #3406, halo is disabled on heatmaps by default
 
 			/**
@@ -275,7 +279,7 @@ seriesType('heatmap', 'scatter', {
  * 
  * @type {Object}
  * @extends series,plotOptions.heatmap
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser,dataURL,marker,pointRange,stack
  * @product highcharts highmaps
  * @apioption series.heatmap
  */

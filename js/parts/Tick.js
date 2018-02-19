@@ -223,7 +223,7 @@ H.Tick.prototype = {
 
 		return {
 			x: horiz ?
-				(
+				H.correctFloat(
 					axis.translate(pos + tickmarkOffset, null, null, old) +
 					axis.transB
 				) :
@@ -251,7 +251,7 @@ H.Tick.prototype = {
 					axis.offset -
 					(axis.opposite ? axis.height : 0)
 				) :
-				(
+				H.correctFloat(
 					cHeight -
 					axis.translate(pos + tickmarkOffset, null, null, old) -
 					axis.transB
@@ -586,6 +586,8 @@ H.Tick.prototype = {
 		this.renderLabel(xy, old, opacity, index);
 
 		tick.isNew = false;
+
+		H.fireEvent(this, 'afterRender');
 	},
 
 	/**

@@ -148,6 +148,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         properties,
         fullPath,
         s,
+		rawComment,
         shouldIgnore = false
     ;
 
@@ -173,7 +174,18 @@ function nodeVisitor(node, e, parser, currentSourceName) {
     if (node.leadingComments && node.leadingComments.length > 0) {
 
         if (!e.comment) {
-          e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
+			rawComment = '';
+			(node.leadingComments || []).some(function (c) {
+				// We only use the one containing @optionparent
+				rawComment = c.raw || c.value;
+				if (rawComment.indexOf('@optionparent') >= 0) {
+					return true;
+				}
+				return false;
+			});
+
+			e.comment = rawComment;
+          // e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
         }
 
         s = e.comment.indexOf('@optionparent');
@@ -220,6 +232,8 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
             if (target) {
                 if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
+					console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
+					// console.log('Found series type:', properties, JSON.stringify(node.arguments[2], false, '  '));
                     properties = node.arguments[2].properties;
                 } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                     properties = node.arguments[0].properties;
@@ -232,6 +246,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
                     properties = node.right.properties;
                 } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
+console.log('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
                     properties = node.right.arguments[2].properties;
                 } else {
                     logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
@@ -252,6 +267,68 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+function isNum(what) {
+    return !isNaN(parseFloat(what)) && isFinite(what);
+};
+
+function isBool (what) {
+    return (what === true || what === false);
+};
+
+function isStr (what) {
+    return (typeof what === 'string' || what instanceof String);
+};
+
+function inferType(node) {
+	var defVal;
+
+	node.doclet = node.doclet || {};
+	node.meta = node.meta || {};
+
+	if (typeof node.doclet.type !== 'undefined') {
+		// We allready have a type, so no infering is required
+		return;
+	}
+
+	defVal = node.doclet.defaultvalue;
+
+	if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {
+		defVal = node.meta.default;
+	}
+
+	if (typeof defVal === 'undefined') {
+		// There may still be hope - if this node has children, it's an object.
+		if (node.children && Object.keys(node.children).length) {
+			node.doclet.type = {
+				names: ['Object']
+			};
+		}
+
+		// We can't infer this type, so abort.
+		return;
+	}
+	
+	node.doclet.type = { names: [] };
+	
+	if (isBool(defVal)) {
+		node.doclet.type.names.push('Boolean');
+	}
+	
+	if (isNum(defVal)) {
+		node.doclet.type.names.push('Number');
+	}
+	
+	if (isStr(defVal)) {
+		node.doclet.type.names.push('String');
+	}
+
+	// If we were unable to deduce a type, assume it's an object
+	if (node.doclet.type.names.length === 0) {
+		node.doclet.type.names.push('Object');
+	}
+
+}
 
 function augmentOption(path, obj) {
     // This is super nasty.
@@ -561,6 +638,36 @@ before functional code for JSDoc to see them.`.yellow
         options._meta.commit = exec('git rev-parse --short HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.date = (new Date()).toString();
+
+		let files = {};
+
+		function inferTypeForTree(obj) {
+			inferType(obj);
+		
+			if (obj.meta && obj.meta.filename) {
+				// Remove user-identifiable info in filename
+				obj.meta.filename = obj.meta.filename.substr(
+					obj.meta.filename.indexOf('highcharts')
+				);
+			}
+
+			files[obj.meta.filename] = 1;
+
+			// Infer types
+			if (obj.children) {
+				Object.keys(obj.children).forEach(function (child) {
+					inferTypeForTree(obj.children[child]);
+				});
+			}
+		}
+
+		Object.keys(options).forEach(function (name) {
+			if (name !== '_meta') {
+				inferTypeForTree(options[name]);
+			}
+		});
+
+		// console.log(Object.keys(files));
 
         dumpOptions();
     }

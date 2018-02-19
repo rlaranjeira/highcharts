@@ -484,52 +484,54 @@ const generateClassReferences = ({ templateDir, destination }) => {
     });
 };
 
-const compile = (files, sourceFolder) => {
-    const createSourceMap = true;
-
-    console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
+const compileSingleFile = (path, sourceFolder, createSourceMap) => {
+    const closureCompiler = require('google-closure-compiler-js');
+    const sourcePath = sourceFolder + path;
+    const outputPath = sourcePath.replace('.src.js', '.js');
+    const src = getFile(sourcePath);
+    const getErrorMessage = (e) => {
+        return [
+            'Compile error in file: ' + path,
+            '- Type: ' + e.type,
+            '- Line: ' + e.lineNo,
+            '- Char : ' + e.charNo,
+            '- Description: ' + e.description
+        ].join('\n');
+    };
     return new Promise((resolve, reject) => {
-        files.forEach(path => {
-            const closureCompiler = require('google-closure-compiler-js');
-            // const fs = require('fs');
-            const sourcePath = sourceFolder + path;
-            const outputPath = sourcePath.replace('.src.js', '.js');
-            const src = getFile(sourcePath);
-            const getErrorMessage = (e) => {
-                return [
-                    'Compile error in file: ' + path,
-                    '- Type: ' + e.type,
-                    '- Line: ' + e.lineNo,
-                    '- Char : ' + e.charNo,
-                    '- Description: ' + e.description
-                ].join('\n');
-            };
-            const out = closureCompiler.compile({
-                compilationLevel: 'SIMPLE_OPTIMIZATIONS',
-                jsCode: [{
-                    src: src
-                }],
-                languageIn: 'ES5',
-                languageOut: 'ES5',
-                createSourceMap: createSourceMap
-            });
-            const errors = out.errors;
-            if (errors.length) {
-                const msg = errors.map((e) => {
-                    return getErrorMessage(e);
-                }).join('\n');
-                reject(msg);
-            } else {
-                writeFile(outputPath, out.compiledCode);
-                if (createSourceMap) {
-                    writeFile(outputPath + '.map', out.sourceMap);
-                }
-                // @todo add filesize information
-                console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
-            }
+        const out = closureCompiler.compile({
+            compilationLevel: 'SIMPLE_OPTIMIZATIONS',
+            jsCode: [{
+                src: src
+            }],
+            languageIn: 'ES5',
+            languageOut: 'ES5',
+            createSourceMap: createSourceMap
         });
-        resolve('Compile is complete');
+        const errors = out.errors;
+        if (errors.length) {
+            const msg = errors.map(getErrorMessage).join('\n');
+            reject(msg);
+        } else {
+            writeFile(outputPath, out.compiledCode);
+            if (createSourceMap) {
+                writeFile(outputPath + '.map', out.sourceMap);
+            }
+            // @todo add filesize information
+            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+            resolve();
+        }
     });
+};
+
+const compile = (files, sourceFolder) => {
+    console.log(
+      colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.')
+    );
+    const createSourceMap = true;
+    const promises = files
+      .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
+    return Promise.all(promises);
 };
 
 /**
@@ -537,10 +539,9 @@ const compile = (files, sourceFolder) => {
  */
 const compileScripts = () => {
     const sourceFolder = './code/';
-    const files = getFilesInFolder(sourceFolder, true, '').filter(path => path.endsWith('.src.js'));
-    return compile(files, sourceFolder)
-        .then(console.log)
-        .catch(console.log);
+    const files = getFilesInFolder(sourceFolder, true, '')
+      .filter(path => path.endsWith('.src.js'));
+    return compile(files, sourceFolder);
 };
 
 /**
@@ -550,8 +551,7 @@ const compileLib = () => {
     const sourceFolder = './vendor/';
     const files = ['canvg.src.js', 'rgbcolor.src.js'];
     return compile(files, sourceFolder)
-        .then(console.log)
-        .catch(console.log);
+        .then(console.log);
 };
 
 const cleanCode = () => {
@@ -571,15 +571,14 @@ const cleanCode = () => {
 const cleanDist = () => {
     return removeDirectory('./build/dist').then(() => {
         console.log('Successfully removed dist directory.');
-    }).catch(console.log);
+    });
 };
 
 const cleanApi = () => {
     return removeDirectory('./build/api')
         .then(() => {
             console.log('Successfully removed api directory.');
-        })
-        .catch(console.log);
+        });
 };
 
 const copyFile = (source, target) => new Promise((resolve, reject) => {
@@ -898,8 +897,7 @@ const filesize = () => {
             const values = obj[key];
             report(key, values.new, values.head);
         });
-    })
-    .catch(console.log);
+    });
 };
 
 /**
@@ -1069,6 +1067,24 @@ const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, r
 });
 
 /**
+ * Some random tests for tree.json's consistency
+ */
+const testTree = (treeFile) => new Promise((resolve, reject) => {
+    const tree = JSON.parse(fs.readFileSync(treeFile, 'utf8'));
+
+    if (Object.keys(tree.plotOptions.children).length < 66) {
+        reject('Tree.json should contain at least 66 series types');
+
+    // } else if (Object.keys(tree.plotOptions.children.pie.children).length < 10) {
+    //    reject('Tree.json should contain at least X properties for pies');
+
+    } else {
+        resolve();
+    }
+
+});
+
+/**
  * Creates the Highcharts API
  *
  * @param {object} options The options for generating the API
@@ -1107,7 +1123,8 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
             }
         }));
     })
-    .then(() => generateAPI(treeFile, output, onlyBuildCurrent));
+    .then(() => generateAPI(treeFile, output, onlyBuildCurrent))
+    .then(() => testTree(treeFile));
 };
 
 const logUpdate = require('log-update');

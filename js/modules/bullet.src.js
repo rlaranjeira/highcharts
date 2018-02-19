@@ -66,15 +66,6 @@ seriesType('bullet', 'column',
 			height: 3,
 
 			/*= if (build.classic) { =*/
-			/**
-			 * The border width of the rectangle representing the target.
-			 *
-			 * In styled mode, use class `highcharts-bullet-target` instead.
-			 * 
-			 * @since   6.0.0
-			 * @product highcharts
-			 */
-			borderWidth: 0
 
 			/**
 			 * The border color of the rectangle representing the target. When
@@ -103,6 +94,17 @@ seriesType('bullet', 'column',
 			 * @product   highcharts
 			 * @apioption plotOptions.bullet.targetOptions.color
 			 */
+			
+			/**
+			 * The border width of the rectangle representing the target.
+			 *
+			 * In styled mode, use class `highcharts-bullet-target` instead.
+			 * 
+			 * @since   6.0.0
+			 * @product highcharts
+			 */
+			borderWidth: 0
+			
 			/*= } =*/
 		},
 
@@ -350,7 +352,7 @@ seriesType('bullet', 'column',
 /**
  * Individual target options for each point.
  * 
- * @extends   series.bullet.targetOptions
+ * @extends   plotOptions.bullet.targetOptions
  * @product   highcharts
  * @apioption series.bullet.data.targetOptions
  */
