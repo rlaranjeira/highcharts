@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/large-dataset.json', function (data) {
+$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/large-dataset.json', function (data) {
 
     // Create a timer
     var start = +new Date();
@@ -10,9 +10,11 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/larg
         chart: {
             events: {
                 load: function () {
-                    this.setTitle(null, {
-                        text: 'Built chart in ' + (new Date() - start) + 'ms'
-                    });
+                    if (!window.TestController) {
+                        this.setTitle(null, {
+                            text: 'Built chart in ' + (new Date() - start) + 'ms'
+                        });
+                    }
                 }
             },
             zoomType: 'x'
@@ -54,7 +56,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/larg
         },
 
         title: {
-            text: 'Hourly temperatures in Vik i Sogn, Norway, 2009-2015'
+            text: 'Hourly temperatures in Vik i Sogn, Norway, 2009-2017'
         },
 
         subtitle: {

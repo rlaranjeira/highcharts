@@ -118,13 +118,20 @@ QUnit.test('X-Range', function (assert) {
     var point = chart.series[0].points[0],
         clipRect = point.clipRect;
     assert.strictEqual(
-        Math.round(
+        Math.floor(
             chart.xAxis[0].toValue(
                 clipRect.attr('width') - clipRect.attr('x')
             )
         ),
         (point.x2 - point.x) * point.partialFill,
         'Clip rect ends at correct position after zoom (#7617).'
+    );
+
+    point.select();
+    assert.strictEqual(
+        point.graphicOriginal.attr('fill'),
+        point.series.options.states.select.color,
+        'Correct fill for a point upon point selection (#8104).'
     );
 });
 
@@ -209,6 +216,23 @@ QUnit.test('X-range data labels', function (assert) {
             return p.dataLabel.attr('y');
         }).join(','),
         [y, -9999, -9999, -9999].join(','),
+        'Shown and hidden labels'
+    );
+
+    chart.xAxis[0].setExtremes();
+    chart.series[0].addPoint({
+        y: 1,
+        x: 0.1,
+        x2: 0.2,
+        label: 'fifth'
+    });
+    chart.yAxis[0].setExtremes(0.5);
+
+    assert.deepEqual(
+        chart.series[0].points.map(function (p) {
+            return p.dataLabel.attr('y') === -9999 ? 'hidden' : 'visible';
+        }),
+        ['hidden', 'hidden', 'hidden', 'hidden', 'visible'],
         'Shown and hidden labels'
     );
 

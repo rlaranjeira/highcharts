@@ -1,7 +1,7 @@
 {
     "globals": {
         "clearInterval": true,
-        "clearTimeout": true,
+        "clearTimeout": false,
         "console": true,
         "module": true,
         "setInterval": true,
@@ -16,24 +16,20 @@
         "consistent-return": 0,
         "func-style": 0,
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
-        "indent": ["error", "tab"],
         "lines-around-comment": 0,
         "max-len": [
             "error", {
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|@default|@apioption)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|@apioption|@default|@param|@return|@type|@typedef|@validvalue)"
             }
         ],
         "newline-after-var": 0,
         "no-alert": 2,
         "no-console": 2,
         "no-debugger": 2,
-        "no-empty": 0,                              /*The noop function. @todo: esling-disable-line?*/
+        "no-empty": 0,                              /*The noop function and empty catches */
         "no-invalid-this": 0,
-        "no-multi-spaces": 0,                       /*Should be fixed*/
-        "no-nested-ternary": 0,
         "no-shadow": 0,                             /*Same variable names in nested scopes. @todo: Fix this, it is useful*/
-        "no-trailing-spaces": 0,
         "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/
         "object-curly-spacing": [2, "always"],
@@ -54,6 +50,7 @@
         "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */,
         
         "highcharts/no-newline-in-doclet-code": 2,
+        "highcharts/no-newline-in-doclet-link": 2,
         "highcharts/unparsable-doclet": 2
         
     },

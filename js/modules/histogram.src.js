@@ -12,13 +12,15 @@ import H from '../parts/Globals.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var each = H.each,
-	objectEach = H.objectEach,
-	seriesType = H.seriesType,
-	correctFloat = H.correctFloat,
-	isNumber = H.isNumber,
-	arrayMax = H.arrayMax,
-	arrayMin = H.arrayMin,
-	merge = H.merge;
+    objectEach = H.objectEach,
+    seriesType = H.seriesType,
+    correctFloat = H.correctFloat,
+    isNumber = H.isNumber,
+    arrayMax = H.arrayMax,
+    arrayMin = H.arrayMin,
+    merge = H.merge,
+    keys = H.keys,
+    map = H.map;
 
 /* ***************************************************************************
  *
@@ -31,45 +33,38 @@ var each = H.each,
  * base series
  **/
 var binsNumberFormulas = {
-	'square-root': function (baseSeries) {
-		return Math.round(Math.sqrt(baseSeries.options.data.length));
-	},
+    'square-root': function (baseSeries) {
+        return Math.round(Math.sqrt(baseSeries.options.data.length));
+    },
 
-	'sturges': function (baseSeries) {
-		return Math.ceil(Math.log(baseSeries.options.data.length) * Math.LOG2E);
-	},
+    'sturges': function (baseSeries) {
+        return Math.ceil(Math.log(baseSeries.options.data.length) * Math.LOG2E);
+    },
 
-	'rice': function (baseSeries) {
-		return Math.ceil(2 * Math.pow(baseSeries.options.data.length, 1 / 3));
-	}
+    'rice': function (baseSeries) {
+        return Math.ceil(2 * Math.pow(baseSeries.options.data.length, 1 / 3));
+    }
 };
 
 /**
  * Returns a function for mapping number to the closed (right opened) bins
- * 
+ *
  * @param {number} binWidth - width of the bin
  * @returns {function}
  **/
-function fitToBinLeftClosed(binWidth) {
-	return function (y) {
-		return Math.floor(y / binWidth) * binWidth;
-	};
-}
-
-/**
- * Identity function - takes a param and returns that param
- * It is used to grouping data with the same values
- *
- * @param {number} y - value
- * @returns {number}
- **/
-function identity(y) {
-	return y;
+function fitToBinLeftClosed(bins) {
+    return function (y) {
+        var i = 1;
+        while (bins[i] <= y) {
+            i++;
+        }
+        return bins[--i];
+    };
 }
 
 /**
  * Histogram class
- * 
+ *
  * @constructor seriesTypes.histogram
  * @augments seriesTypes.column
  * @mixes DerivedSeriesMixin
@@ -89,114 +84,121 @@ function identity(y) {
  **/
 seriesType('histogram', 'column', {
     /**
- 	 * A preferable number of bins. It is a suggestion, so a histogram may have
- 	 * a different number of bins. By default it is set to the square root
- 	 * of the base series' data length. Available options are: `square-root`,
- 	 * `sturges`, `rice`. You can also define a function which takes a
- 	 * `baseSeries` as a parameter and should return a positive integer.
-	 *
-	 * @type {String|Number|Function}
-	 * @validvalue ["square-root", "sturges", "rice"]
-	 */
-	binsNumber: 'square-root',
+      * A preferable number of bins. It is a suggestion, so a histogram may have
+      * a different number of bins. By default it is set to the square root
+      * of the base series' data length. Available options are: `square-root`,
+      * `sturges`, `rice`. You can also define a function which takes a
+      * `baseSeries` as a parameter and should return a positive integer.
+     *
+     * @type {String|Number|Function}
+     * @validvalue ["square-root", "sturges", "rice"]
+     */
+    binsNumber: 'square-root',
 
     /**
-	 * Width of each bin. By default the bin's width is calculated as
-	 * `(max - min) / number of bins`. This option takes precedence over
-	 * [binsNumber](#plotOptions.histogram.binsNumber).
-	 *
-	 * @type {Number}
-	 */
-	binWidth: undefined,
-	pointPadding: 0,
-	groupPadding: 0,
-	grouping: false,
-	pointPlacement: 'between',
-	tooltip: {
-		headerFormat: '',
-		pointFormat: '<span style="font-size:10px">{point.x} - {point.x2}' +
-			'</span><br/>' +
-			'<span style="color:{point.color}">\u25CF</span>' +
-			' {series.name} <b>{point.y}</b><br/>'
-	}
+     * Width of each bin. By default the bin's width is calculated as
+     * `(max - min) / number of bins`. This option takes precedence over
+     * [binsNumber](#plotOptions.histogram.binsNumber).
+     *
+     * @type {Number}
+     */
+    binWidth: undefined,
+    pointPadding: 0,
+    groupPadding: 0,
+    grouping: false,
+    pointPlacement: 'between',
+    tooltip: {
+        headerFormat: '',
+        pointFormat: '<span style="font-size:10px">{point.x} - {point.x2}' +
+            '</span><br/>' +
+            '<span style="color:{point.color}">\u25CF</span>' +
+            ' {series.name} <b>{point.y}</b><br/>'
+    }
 
 }, merge(derivedSeriesMixin, {
-	setDerivedData: function () {
-		var data = this.derivedData(
-			this.baseSeries.yData,
-			this.binsNumber(),
-			this.options.binWidth
-		);
+    setDerivedData: function () {
+        var data = this.derivedData(
+            this.baseSeries.yData,
+            this.binsNumber(),
+            this.options.binWidth
+        );
 
-		this.setData(data, false);
-	},
+        this.setData(data, false);
+    },
 
-	derivedData: function (baseData, binsNumber, binWidth) {
-		var max = arrayMax(baseData),
-			min = arrayMin(baseData),
-			frequencies = {},
-			data = [],
-			x,
-			fitToBin;
+    derivedData: function (baseData, binsNumber, binWidth) {
+        var max = arrayMax(baseData),
+            min = arrayMin(baseData),
+            frequencies = {},
+            data = [],
+            x,
+            fitToBin;
 
-		binWidth = this.binWidth = isNumber(binWidth) ?
-			binWidth :
-			(max - min) / binsNumber;
+        binWidth = this.binWidth = correctFloat(
+            isNumber(binWidth) ?
+                (binWidth || 1) :
+                (max - min) / binsNumber
+        );
 
-		fitToBin = binWidth ? fitToBinLeftClosed(binWidth) : identity;
+        // If binWidth is 0 then max and min are equaled,
+        // increment the x with some positive value to quit the loop
+        for (x = min; x < max; x = correctFloat(x + binWidth)) {
+            frequencies[x] = 0;
+        }
 
-    // If binWidth is 0 then max and min are equaled,
-    // increment the x with some positive value to quit the loop
-		for (x = fitToBin(min); x <= max; x += (binWidth || 1)) {
-			frequencies[correctFloat(fitToBin(x))] = 0;
-		}
+        if (frequencies[min] !== 0) {
+            frequencies[correctFloat(min)] = 0;
+        }
 
-		each(baseData, function (y) {
-			var x = correctFloat(fitToBin(y));
-			frequencies[x]++;
-		});
+        fitToBin = fitToBinLeftClosed(
+            // Sorting the array of keys from frequencies is needed,
+            // because of the discrepancy in ordering the numerable keys inside
+            // the objects, when there are integers and floats simultanously.
+            map(keys(frequencies).sort(), function (elem) {
+                return parseFloat(elem);
+            }));
 
-		objectEach(frequencies, function (frequency, x) {
-			data.push({
-				x: Number(x),
-				y: frequency,
-				x2: correctFloat(Number(x) + binWidth)
-			});
-		});
+        each(baseData, function (y) {
+            var x = correctFloat(fitToBin(y));
+            frequencies[x]++;
+        });
 
-		data.sort(function (a, b) {
-			return a.x - b.x;
-		});
+        objectEach(frequencies, function (frequency, x) {
+            data.push({
+                x: Number(x),
+                y: frequency,
+                x2: correctFloat(Number(x) + binWidth)
+            });
+        });
 
-		return data;
-	},
+        data.sort(function (a, b) {
+            return a.x - b.x;
+        });
 
-	binsNumber: function () {
-		var binsNumberOption = this.options.binsNumber;
-		var binsNumber = binsNumberFormulas[binsNumberOption] ||
-			// #7457
-			(typeof binsNumberOption === 'function' && binsNumberOption);
+        return data;
+    },
 
-		return Math.ceil(
-			(binsNumber && binsNumber(this.baseSeries)) ||
-			(
-				isNumber(binsNumberOption) ?
-					binsNumberOption :
-					binsNumberFormulas['square-root'](this.baseSeries)
-			)
-		);
-	}
+    binsNumber: function () {
+        var binsNumberOption = this.options.binsNumber;
+        var binsNumber = binsNumberFormulas[binsNumberOption] ||
+            // #7457
+            (typeof binsNumberOption === 'function' && binsNumberOption);
+
+        return Math.ceil(
+            (binsNumber && binsNumber(this.baseSeries)) ||
+            (
+                isNumber(binsNumberOption) ?
+                    binsNumberOption :
+                    binsNumberFormulas['square-root'](this.baseSeries)
+            )
+        );
+    }
 }));
 
 /**
  * A `histogram` series. If the [type](#series.histogram.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- * 
- * For options that apply to multiple series, it is recommended to add
- * them to the [plotOptions.series](#plotOptions.series) options structure.
- * To apply to all series of this specific type, apply it to 
- * [plotOptions.histogram](#plotOptions.histogram).
- * 
+ *
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.histogram
@@ -218,7 +220,7 @@ seriesType('histogram', 'column', {
  * An array of data points for the series. For the `histogram` series type,
  * points are calculated dynamically. See
  * [histogram.baseSeries](#series.histogram.baseSeries).
- * 
+ *
  * @type {Array<Object|Array>}
  * @since 6.0.0
  * @extends series.column.data

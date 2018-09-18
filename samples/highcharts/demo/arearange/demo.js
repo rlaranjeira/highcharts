@@ -1,13 +1,17 @@
 
 $.getJSON(
-    'https://cdn.rawgit.com/highcharts/highcharts/v6.0.5/samples/data/range.json',
+    'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/range.json',
     function (data) {
 
         Highcharts.chart('container', {
 
             chart: {
                 type: 'arearange',
-                zoomType: 'x'
+                zoomType: 'x',
+                scrollablePlotArea: {
+                    minWidth: 600,
+                    scrollPositionX: 1
+                }
             },
 
             title: {
